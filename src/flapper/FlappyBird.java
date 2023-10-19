@@ -35,8 +35,14 @@ public class FlappyBird implements ActionListener, KeyListener {
     public int score;
     public int birdSpeed;
 
-    final ImageIcon icon = new ImageIcon("resources\\bird.png");
-    
+    final ImageIcon frameIcon = new ImageIcon("resources\\bird.png");
+    final ImageIcon backgroundGraphicTemp = new ImageIcon("resources\\background.png");
+    Image backgroundGraphic = backgroundGraphicTemp.getImage();
+    final ImageIcon groundGraphicTemp = new ImageIcon("resources\\ground.png");
+    Image groundGraphic = groundGraphicTemp.getImage();
+    final ImageIcon birdGraphicTemp = new ImageIcon("resources\\bird.png");
+    Image birdGraphic = birdGraphicTemp.getImage();
+
     protected boolean stop = false;
     private boolean isPressedUp = false;
     private boolean isPressedDown = false;
@@ -51,17 +57,20 @@ public class FlappyBird implements ActionListener, KeyListener {
         timer = new Timer(20, this);
         display = new Display();
 
+        // InputStream is = FlappyBird.class.getResourceAsStream("resources\\arcade_font.ttf");
+        // Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+        // Font scoreFont = font.deriveFont(12f);
+
         pipeDown = new Rectangle(265, 500, 90, HEIGHT);
         pipeUp = new Rectangle(265, -560, 90, HEIGHT);
         ground = new Rectangle(0, 700, WIDTH, 100);
         grass = new Rectangle(0, 700, WIDTH, 20);
-
         bird = new Rectangle(-30, 350, 30, 30);
 
         frame.add(display);
         frame.addKeyListener(this);
         
-        frame.setIconImage(icon.getImage());
+        frame.setIconImage(frameIcon.getImage());
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -187,31 +196,25 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
     }
 
-    public void repaint(Graphics g) { //TODO: grafika
+    public void repaint(Graphics g) {   //TODO: grafika
 
-        g.setColor(Color.cyan);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.drawImage(backgroundGraphic, 0, 0, null);
 
         g.setColor(new Color(103, 212, 77, 255));
         g.fillRect(pipeDown.x, pipeDown.y, pipeDown.width, pipeDown.height);
         g.fillRect(pipeUp.x, pipeUp.y, pipeUp.width, pipeUp.height);
 
-        g.setColor(new Color(124, 82, 52, 255));
-        g.fillRect(ground.x, ground.y, ground.width, ground.height);
+        g.drawImage(groundGraphic, 0, HEIGHT - groundGraphic.getHeight(null), null);
 
         //TODO: ten pierdolony font dodac
-        g.setColor(Color.white);
-        g.setFont(new Font("sans-serif", 1, 60));
-        g.drawString(score+"", 505, 70);
-        
-        // set new color to natural looking green
-        g.setColor(new Color(0, 153, 0, 255));
-        g.fillRect(grass.x, grass.y, grass.width, grass.height);
+        g.setColor(Color.black);
+        g.setFont(new Font("Comic Sans MS", 1, 60));
+        //g.setFont(scoreFont);
+        g.drawString(score+"", 15, 60);
 
-        g.setColor(Color.yellow);
-        g.fillOval(bird.x, bird.y, bird.width, bird.height);
+        g.drawImage(birdGraphic, bird.x, bird.y, null);
 
-        if (bird.intersects(pipeDown)|| bird.intersects(pipeUp) ) {
+        if (bird.intersects(pipeDown) || bird.intersects(pipeUp)) {
             System.out.println("collision");
             bird.x = 300;
             stop = true;
