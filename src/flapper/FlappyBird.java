@@ -4,14 +4,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Ellipse2D;
 import java.util.Random;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -30,7 +33,10 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle bird;
     public int cycle;
     public int score;
+    public int birdSpeed;
 
+    final ImageIcon icon = new ImageIcon("resources\\bird.png");
+    
     protected boolean stop = false;
     private boolean isPressedUp = false;
     private boolean isPressedDown = false;
@@ -54,7 +60,8 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         frame.add(display);
         frame.addKeyListener(this);
-
+        
+        frame.setIconImage(icon.getImage());
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,7 +90,8 @@ public class FlappyBird implements ActionListener, KeyListener {
         System.out.println("stop");
         timer.stop();
         bird.x = -30;
-        int choice = JOptionPane.showConfirmDialog(null, String.format("Score:%2d \nDo you want to play again?", score), "Game Over", JOptionPane.YES_NO_OPTION);
+        int choice = JOptionPane.showConfirmDialog(null, String.format("Score:%2d \nDo you want to play again?", score), 
+            "Game Over", JOptionPane.YES_NO_OPTION);
         switch(choice){
             case JOptionPane.YES_OPTION:    // Restart
                 restart();
@@ -113,7 +121,6 @@ public class FlappyBird implements ActionListener, KeyListener {
     public int jump = 0;
     public int fallSpeed = 1;
     public int raiseSpeed = 10;
-    public int birdSpeed = 5;
 
 
     public void birdMove() {    //TODO: rewrite movementu
@@ -132,11 +139,11 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
 
         // If the bird is too high, move it down
-        if(bird.y <= 100){
+        if (bird.y <= 100) {
             bird.y += fallSpeed/5;
         }
         // If the bird is too low, move it up   
-        if(bird.y >= HEIGHT - 200){
+        if (bird.y >= HEIGHT - 200) {
             jump += 20;
             raiseSpeed = rand.nextInt(10, 15);
             fallSpeed = 1;
@@ -151,9 +158,9 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
         // After the bird jumps, start falling; if it is jumping then smoothly raise the bird
 
-        if(jump == 0){
+        if (jump == 0) {
             bird.y += fallSpeed/4;
-        }else{
+        } else {
             bird.y -= raiseSpeed;
             jump -= 1;
         }
@@ -180,7 +187,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
     }
 
-    public void repaint(Graphics g) {
+    public void repaint(Graphics g) { //TODO: grafika
 
         g.setColor(Color.cyan);
         g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -202,7 +209,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         g.fillRect(grass.x, grass.y, grass.width, grass.height);
 
         g.setColor(Color.yellow);
-        g.fillRect(bird.x, bird.y, bird.width, bird.height);
+        g.fillOval(bird.x, bird.y, bird.width, bird.height);
 
         if (bird.intersects(pipeDown)|| bird.intersects(pipeUp) ) {
             System.out.println("collision");
@@ -217,8 +224,8 @@ public class FlappyBird implements ActionListener, KeyListener {
         FlappyBird birdie = new FlappyBird();
     }
 
-    public void up() { //TODO: poprawic kontrolki
-        if (pipeDown.y < 0) {
+    public void up() {
+        if (pipeUp.y <= -HEIGHT) {
             return;
         }
         System.out.println("up");
@@ -227,7 +234,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     }
 
     public void down() {
-        if (pipeDown.y >= HEIGHT) {
+        if (pipeDown.y >= HEIGHT - 100) {
             return;
         }
         System.out.println("down");
@@ -251,8 +258,10 @@ public class FlappyBird implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         System.out.println("relesas");
-        isPressedUp = false;
-        isPressedDown = false;
+        if (e.getKeyCode() ==  KeyEvent.VK_UP) {
+            isPressedUp = false;
+        } if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            isPressedDown = false;
+        }
     }
-
 }
