@@ -2,6 +2,7 @@ package flapper;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -28,7 +29,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle grass;
     public Rectangle bird;
     public int cycle;
-    public int score = 0;
+    public int score;
 
     protected boolean stop = false;
     private boolean isPressedUp = false;
@@ -36,8 +37,9 @@ public class FlappyBird implements ActionListener, KeyListener {
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
     final int WIDTH = 600, HEIGHT = 800;
 
+    
     public FlappyBird() {
-        JFrame frjame = new JFrame("Flap you");
+        JFrame frame = new JFrame("Flap you");
 
         flappyBird = this;
         timer = new Timer(20, this);
@@ -50,14 +52,14 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         bird = new Rectangle(-30, 350, 30, 30);
 
-        frjame.add(display);
-        frjame.addKeyListener(this);
+        frame.add(display);
+        frame.addKeyListener(this);
 
-        frjame.setSize(WIDTH, HEIGHT);
-        frjame.setLocation(dim.width / 2 - frjame.getSize().width / 2, dim.height / 2 - frjame.getSize().height / 2);
-        frjame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frjame.setResizable(false);
-        frjame.setVisible(true);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setVisible(true);
         restart();
     }
 
@@ -74,7 +76,6 @@ public class FlappyBird implements ActionListener, KeyListener {
             stopper();
         }
         cycle+=1;
-
     }
 
     public void stopper() {
@@ -82,14 +83,14 @@ public class FlappyBird implements ActionListener, KeyListener {
         System.out.println("stop");
         timer.stop();
         bird.x = -30;
-        int choice = JOptionPane.showConfirmDialog(null, String.format("Score:%2d \nDo you want to restart the game?", score), "Game Over",
-                JOptionPane.YES_NO_OPTION);
-        if (choice == JOptionPane.YES_OPTION) {
-            // Restart the game
-            restart();
-        } else {
-            // Exit the game
-            System.exit(0);
+        int choice = JOptionPane.showConfirmDialog(null, String.format("Score:%2d \nDo you want to play again?", score), "Game Over", JOptionPane.YES_NO_OPTION);
+        switch(choice){
+            case JOptionPane.YES_OPTION:    // Restart
+                restart();
+                break;
+            case JOptionPane.NO_OPTION:     // Quit game
+                System.exit(0);
+                break;
         }
     }
 
@@ -103,6 +104,8 @@ public class FlappyBird implements ActionListener, KeyListener {
         pipeDown.y = 500;
         pipeUp.x = 265;
         pipeUp.y = -560;
+        score = 0;
+        birdSpeed = 5;
 
         // Restart the timer
         timer.start();
@@ -110,19 +113,21 @@ public class FlappyBird implements ActionListener, KeyListener {
     public int jump = 0;
     public int fallSpeed = 1;
     public int raiseSpeed = 10;
+    public int birdSpeed = 5;
 
 
-    public void birdMove() {
+    public void birdMove() {    //TODO: rewrite movementu
         Random rand = new Random();
 
         // Move the bird to the right
-        bird.x += 5;
+        bird.x += birdSpeed;
 
         // If the bird goes off the screen, reset it
         if (bird.x >= WIDTH) {
             bird.x = -30;
             bird.y = rand.nextInt(HEIGHT - 100);
             score += 1;
+            increaseDifficulty();
             return;
         }
 
@@ -163,6 +168,17 @@ public class FlappyBird implements ActionListener, KeyListener {
         raiseSpeed -= 1;
         fallSpeed += 1;
     }
+    
+    public void increaseDifficulty(){
+        if (score%5 == 0 && (score%2 != 0 | score > 50)){
+            birdSpeed += 2;
+            System.out.println("popierdalacz 3000");
+        } else if (score%10 == 0 && score < 51){
+            pipeDown.y -= 20;
+            pipeUp.y += 20;
+            System.out.println("sie popiesci to sie zmiesci");
+        }
+    }
 
     public void repaint(Graphics g) {
 
@@ -176,11 +192,16 @@ public class FlappyBird implements ActionListener, KeyListener {
         g.setColor(new Color(124, 82, 52, 255));
         g.fillRect(ground.x, ground.y, ground.width, ground.height);
 
+        //TODO: ten pierdolony font dodac
+        g.setColor(Color.white);
+        g.setFont(new Font("sans-serif", 1, 60));
+        g.drawString(score+"", 505, 70);
+        
         // set new color to natural looking green
         g.setColor(new Color(0, 153, 0, 255));
         g.fillRect(grass.x, grass.y, grass.width, grass.height);
 
-        g.setColor(Color.red);
+        g.setColor(Color.yellow);
         g.fillRect(bird.x, bird.y, bird.width, bird.height);
 
         if (bird.intersects(pipeDown)|| bird.intersects(pipeUp) ) {
@@ -190,14 +211,13 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
 
         birdMove();
-
     }
 
     public static void main(String[] args) {
         FlappyBird birdie = new FlappyBird();
     }
 
-    public void up() {
+    public void up() { //TODO: poprawic kontrolki
         if (pipeDown.y < 0) {
             return;
         }
@@ -207,7 +227,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     }
 
     public void down() {
-        if (pipeDown.y > HEIGHT) {
+        if (pipeDown.y >= HEIGHT) {
             return;
         }
         System.out.println("down");
@@ -219,7 +239,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             isPressedUp = true;
-        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        } if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             isPressedDown = true;
         }
     }
