@@ -3,7 +3,6 @@ package flapper;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.LayoutManager;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
