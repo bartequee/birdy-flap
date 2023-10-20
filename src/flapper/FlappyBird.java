@@ -31,7 +31,6 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle bird;
     public int cycle;
     public int score;
-    public int birdSpeed;
 
     final ImageIcon frameIcon = new ImageIcon("src/resources/resources/background.png");
     final ImageIcon backgroundGraphicTemp = new ImageIcon("src/flapper/resources/background.png");
@@ -125,66 +124,49 @@ public class FlappyBird implements ActionListener, KeyListener {
         pipeUp.y = -560;
         score = 0;
         birdSpeed = 5;
+        step = 0;
+        bird.y = 350;
 
         // Restart the timer
         timer.start();
     }
-    public int jump = 0;
-    public int fallSpeed = 1;
-    public int raiseSpeed = 10;
-
+    public int birdSpeed = 5;
 
     public void birdMove() {    //TODO: rewrite movementu
         Random rand = new Random();
-
-        // Move the bird to the right
+        if(rand.nextInt(10)==5){
+            step = 0;
+            jump();
+        }
+        if(step >= 1){
+            jump();
+        }
         bird.x += birdSpeed;
 
-        // If the bird goes off the screen, reset it
-        if (bird.x >= WIDTH) {
+        if(bird.y >= HEIGHT - 100){
+            jump();
+        }
+
+        if(bird.x>=WIDTH){
             bird.x = -30;
-            bird.y = rand.nextInt(HEIGHT - 100);
-            score += 1;
-            increaseDifficulty();
-            return;
+            bird.y = 350;
+            step = 0;
+            score +=1;
+            jump();
         }
 
-        // If the bird is too high, move it down
-        if (bird.y <= 100) {
-            bird.y += fallSpeed/5;
-        }
-        // If the bird is too low, move it up   
-        if (bird.y >= HEIGHT - 200) {
-            jump += 20;
-            raiseSpeed = rand.nextInt(10, 15);
-            fallSpeed = 1;
-        }
-        if (raiseSpeed <= 0) {
-            raiseSpeed = 1;
-        }
-         
-        if (bird.x >= 240 && bird.x <= 280) {
-            bird.y += fallSpeed/5;
-            return;
-        }
-        // After the bird jumps, start falling; if it is jumping then smoothly raise the bird
+        // Move the bird to the right
+        
+    }
+    int step = 0;
+    int starty = 0;
 
-        if (jump == 0) {
-            bird.y += fallSpeed/4;
-        } else {
-            bird.y -= raiseSpeed;
-            jump -= 1;
-        }
-
-        // jump - or not
-        if(cycle % rand.nextInt(40, 60) == 0){
-            jump = rand.nextInt(15, 20);
-            raiseSpeed = rand.nextInt(10, 15);
-            fallSpeed = 1;
-
-        }
-        raiseSpeed -= 1;
-        fallSpeed += 1;
+    public void jump(){
+        if(step == 0){
+            starty = bird.y;
+        }   
+        bird.y = starty + (int)Math.pow((step-10),2)/3-33;
+        step += 1;
     }
     
     public void increaseDifficulty(){
