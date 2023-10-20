@@ -11,13 +11,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Ellipse2D;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+//import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class FlappyBird implements ActionListener, KeyListener {
@@ -35,13 +34,17 @@ public class FlappyBird implements ActionListener, KeyListener {
     public int score;
     public int birdSpeed;
 
-    final ImageIcon frameIcon = new ImageIcon("resources\\bird.png");
-    final ImageIcon backgroundGraphicTemp = new ImageIcon("resources\\background.png");
+    final ImageIcon frameIcon = new ImageIcon("src\\flapper\\resources\\bird.png");
+    final ImageIcon backgroundGraphicTemp = new ImageIcon("src\\flapper\\resources\\background.png");
     Image backgroundGraphic = backgroundGraphicTemp.getImage();
-    final ImageIcon groundGraphicTemp = new ImageIcon("resources\\ground.png");
+    final ImageIcon groundGraphicTemp = new ImageIcon("src\\flapper\\resources\\ground.png");
     Image groundGraphic = groundGraphicTemp.getImage();
-    final ImageIcon birdGraphicTemp = new ImageIcon("resources\\bird.png");
+    final ImageIcon birdGraphicTemp = new ImageIcon("src\\flapper\\resources\\bird.png");
     Image birdGraphic = birdGraphicTemp.getImage();
+    final ImageIcon pipeUpGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_up.png");
+    Image pipeUpGraphic = pipeUpGraphicTemp.getImage();
+    final ImageIcon pipeDownGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_down.png");
+    Image pipeDownGraphic = pipeDownGraphicTemp.getImage();
 
     protected boolean stop = false;
     private boolean isPressedUp = false;
@@ -200,9 +203,11 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         g.drawImage(backgroundGraphic, 0, 0, null);
 
-        g.setColor(new Color(103, 212, 77, 255));
-        g.fillRect(pipeDown.x, pipeDown.y, pipeDown.width, pipeDown.height);
-        g.fillRect(pipeUp.x, pipeUp.y, pipeUp.width, pipeUp.height);
+        // g.setColor(new Color(103, 212, 77, 255));
+        // g.fillRect(pipeDown.x, pipeDown.y, pipeDown.width, pipeDown.height);
+        // g.fillRect(pipeUp.x, pipeUp.y, pipeUp.width, pipeUp.height);
+        g.drawImage(pipeUpGraphic, pipeUp.x, pipeUp.y, null);
+        g.drawImage(pipeDownGraphic, pipeDown.x, pipeDown.y, null);
 
         g.drawImage(groundGraphic, 0, HEIGHT - groundGraphic.getHeight(null), null);
 
