@@ -1,18 +1,11 @@
-## Getting Started
+# Birdy Flap
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+[a]: src/flapper/resources/game_screenshot_main.png
 
-## Folder Structure
+**Birdy flap** is a game based on a classic arcade Flappy Bird.
 
-The workspace contains two folders by default, where:
+The only thing is.. imagine how the pipes must feel as the villains all the time. We wish to end the pipe-hate. As such, we present the **Birdy Flap**, which is all about the pipes.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+The project is a collaborative work of Michał Greszta and Bartosz Janik.
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+![Game Screenshot][a]
