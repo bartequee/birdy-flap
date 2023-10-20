@@ -50,9 +50,10 @@ public class FlappyBird implements ActionListener, KeyListener {
     final int WIDTH = 600, HEIGHT = 800;
     public int step = 0;
     public int starty = 0;
+    JFrame frame;
 
     public FlappyBird() {
-        JFrame frame = new JFrame("Flap you");
+        frame = new JFrame("Flap you");
 
         flappyBird = this;
         timer = new Timer(20, this);
@@ -106,6 +107,12 @@ public class FlappyBird implements ActionListener, KeyListener {
         stop = true;
         timer.stop();
         bird.x = -30;
+
+        loseDialog dialog = new loseDialog();
+        dialog.setScore(score);
+
+        dialog.show();
+
         int choice = JOptionPane.showConfirmDialog(null, String.format("Score:%2d \nDo you want to play again?", score),
                 "Game Over", JOptionPane.YES_NO_OPTION);
         switch (choice) {
@@ -136,6 +143,7 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         // start the game loop again
         timer.start();
+        jump();
     }
 
     public int birdSpeed = 5;
