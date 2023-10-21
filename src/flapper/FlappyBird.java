@@ -31,17 +31,18 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle bird;
     public int score;
 
-    final ImageIcon frameIcon = new ImageIcon("src/resources/resources/background.png");
-    final ImageIcon backgroundGraphicTemp = new ImageIcon("src/flapper/resources/background.png");
-    Image backgroundGraphic = backgroundGraphicTemp.getImage();
-    final ImageIcon groundGraphicTemp = new ImageIcon("src/flapper/resources/ground.png");
-    Image groundGraphic = groundGraphicTemp.getImage();
-    final ImageIcon birdGraphicTemp = new ImageIcon("src/flapper/resources/bird.png");
-    Image birdGraphic = birdGraphicTemp.getImage();
-    final ImageIcon pipeUpGraphicTemp = new ImageIcon("src/flapper/resources/pipe_down.png");
-    Image pipeUpGraphic = pipeUpGraphicTemp.getImage();
-    final ImageIcon pipeDownGraphicTemp = new ImageIcon("src/flapper/resources/pipe_down.png");
-    Image pipeDownGraphic = pipeDownGraphicTemp.getImage();
+    private ImageIcon frameIcon;
+    private Image backgroundGraphic;
+    private Image groundGraphic;
+    private Image birdGraphic;
+    private Image pipeUpGraphic;
+    private Image pipeDownGraphic;
+
+    private ImageIcon groundGraphicTemp;
+    private ImageIcon backgroundGraphicTemp;
+    private ImageIcon birdGraphicTemp;
+    private ImageIcon pipeUpGraphicTemp;
+    private ImageIcon pipeDownGraphicTemp;
 
     protected boolean stop = false;
     private boolean isPressedUp = false;
@@ -53,7 +54,7 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
-
+        loadGraphics(checkSystem());
         flappyBird = this;
         timer = new Timer(20, this);
         display = new Display();
@@ -80,6 +81,35 @@ public class FlappyBird implements ActionListener, KeyListener {
         frame.setResizable(false);
         frame.setVisible(true);
         restart();
+    }
+    public boolean checkSystem(){
+        if(System.getProperty("os.name").toLowerCase().contains("mac")){
+            return true;
+        }
+        return false;
+    }
+    public void loadGraphics(boolean isMac){
+        if(isMac){
+            frameIcon = new ImageIcon("src/resources/resources/background.png");
+            groundGraphicTemp = new ImageIcon("src/flapper/resources/ground.png");
+            backgroundGraphicTemp = new ImageIcon("src/flapper/resources/background.png");
+            birdGraphicTemp = new ImageIcon("src/flapper/resources/bird.png");
+            pipeUpGraphicTemp = new ImageIcon("src/flapper/resources/pipe_up.png");
+            pipeDownGraphicTemp = new ImageIcon("src/flapper/resources/pipe_down.png");
+        
+        }else{
+            frameIcon = new ImageIcon("src\\resources\\resources\\background.png");
+            groundGraphicTemp = new ImageIcon("src\\flapper\\resources\\ground.png");
+            backgroundGraphicTemp = new ImageIcon("src\\flapper\\resources\\background.png");
+            birdGraphicTemp = new ImageIcon("src\\flapper\\resources\\bird.png");
+            pipeUpGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_up.png");
+            pipeDownGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_down.png");
+        }
+        backgroundGraphic = backgroundGraphicTemp.getImage();
+        groundGraphic = groundGraphicTemp.getImage();
+        birdGraphic = birdGraphicTemp.getImage();
+        pipeUpGraphic = pipeUpGraphicTemp.getImage();
+        pipeDownGraphic = pipeDownGraphicTemp.getImage();
     }
 
     public void actionPerformed(ActionEvent e) {
