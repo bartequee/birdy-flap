@@ -262,7 +262,7 @@ public class FlappyBird implements ActionListener, KeyListener {
 
 
     public void up() {
-        if (pipeUp.y <= -HEIGHT) {
+        if (pipeDown.y <= 0) {
             return;
         }
         pipeDown.y -= 15;
@@ -270,7 +270,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     }
 
     public void down() {
-        if (pipeDown.y >= HEIGHT - 100) {
+        if (pipeDown.y >= HEIGHT + 200) {
             return;
         }
         pipeDown.y += 15;
