@@ -3,15 +3,18 @@ package flapper;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.RenderingHints.Key;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -31,6 +34,8 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle grass;
     public Rectangle bird;
     public int score;
+    Font customFont;
+
 
     private ImageIcon frameIcon;
     private Image backgroundGraphic;
@@ -55,16 +60,10 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
-        loadGraphics(checkSystem());
+        loadGraphics();
         flappyBird = this;
         timer = new Timer(20, this);
         display = new Display();
-
-        // InputStream is = FlappyBird.class.getResourceAsStream("resources\\arcade_font.ttf");
-        // InputStream is =
-        // FlappyBird.class.getResourceAsStream("resources\\arcade_font.ttf");
-        // Font font = Font.createFont(Font.TRUETYPE_FONT, is);
-        // Font scoreFont = font.deriveFont(12f);
 
         pipeDown = new Rectangle(265, 500, 90, HEIGHT);
         pipeUp = new Rectangle(265, -560, 90, HEIGHT);
@@ -83,28 +82,25 @@ public class FlappyBird implements ActionListener, KeyListener {
         frame.setVisible(true);
         restart();
     }
-    public boolean checkSystem(){
-        if(System.getProperty("os.name").toLowerCase().contains("mac")){
-            return true;
-        }
-        return false;
-    }
-    public void loadGraphics(boolean isMac){
-        if(isMac){
-            frameIcon = new ImageIcon("src/resources/resources/background.png");
-            groundGraphicTemp = new ImageIcon("src/flapper/resources/ground.png");
-            backgroundGraphicTemp = new ImageIcon("src/flapper/resources/background.png");
-            birdGraphicTemp = new ImageIcon("src/flapper/resources/bird.png");
-            pipeUpGraphicTemp = new ImageIcon("src/flapper/resources/pipe_up.png");
-            pipeDownGraphicTemp = new ImageIcon("src/flapper/resources/pipe_down.png");
-        
-        }else{
-            frameIcon = new ImageIcon("src\\resources\\resources\\background.png");
-            groundGraphicTemp = new ImageIcon("src\\flapper\\resources\\ground.png");
-            backgroundGraphicTemp = new ImageIcon("src\\flapper\\resources\\background.png");
-            birdGraphicTemp = new ImageIcon("src\\flapper\\resources\\bird.png");
-            pipeUpGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_up.png");
-            pipeDownGraphicTemp = new ImageIcon("src\\flapper\\resources\\pipe_down.png");
+
+    public void loadGraphics(){
+            frameIcon = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "bird.png");
+            groundGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "ground.png");
+            backgroundGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "background.png");
+            birdGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "bird.png");
+            pipeUpGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "pipe_up.png");
+            pipeDownGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "pipe_down.png");
+
+        try {
+            //create the font to use. Specify the size!
+            customFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/flapper/resources/arcade_font.ttf")).deriveFont(40f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            //register the font
+            ge.registerFont(customFont);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch(FontFormatException e) {
+            e.printStackTrace();
         }
         backgroundGraphic = backgroundGraphicTemp.getImage();
         groundGraphic = groundGraphicTemp.getImage();
@@ -157,6 +153,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         score = 0;
         birdSpeed = 7;
         step = 0;
+        
 
         // reset position of sprites
         pipeDown.x = 265;
@@ -235,6 +232,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     }
 
     public void repaint(Graphics g) { // TODO: grafika
+         
 
         g.drawImage(backgroundGraphic, 0, 0, null);
 
@@ -248,7 +246,8 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         // TODO: ten pierdolony font dodac
         g.setColor(Color.black);
-        g.setFont(new Font("Comic Sans MS", 1, 60));
+        // g.setFont(new Font("Comic Sans MS", 1, 60));
+        g.setFont(customFont);
         // g.setFont(scoreFont);
         g.drawString(score + "", 15, 60);
 
