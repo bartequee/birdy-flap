@@ -177,7 +177,13 @@ public class FlappyBird implements ActionListener, KeyListener {
         // as possible, it is split and its progress is monitored
         // using the <step> flag. each jump starts from step=0
         if (rand.nextInt(10) == 1) {
-            step = 0;
+            if (! (bird.x > 250 && bird.x < 350)) {
+                step = 0;
+
+                jump();
+            }
+        }
+        if(bird.y > 500){
             jump();
         }
         // if the jump is not being done in this tick, proceed to
