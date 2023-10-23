@@ -183,7 +183,8 @@ public class FlappyBird implements ActionListener, KeyListener {
                 jump();
             }
         }
-        if(bird.y > 500){
+        if(bird.y > 600){
+            step = 0;
             jump();
         }
         // if the jump is not being done in this tick, proceed to
@@ -250,7 +251,6 @@ public class FlappyBird implements ActionListener, KeyListener {
         g.drawImage(birdGraphic, bird.x, bird.y, null);
 
         if (bird.intersects(pipeDown) || bird.intersects(pipeUp)) {
-            System.out.println("collision");
             bird.x = 300;
             stop = true;
         }
