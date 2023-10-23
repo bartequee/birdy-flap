@@ -33,6 +33,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     public Rectangle ground;
     public Rectangle grass;
     public Rectangle bird;
+    public Rectangle banner;
     public int score;
     Font customFont;
 
@@ -50,6 +51,8 @@ public class FlappyBird implements ActionListener, KeyListener {
     private ImageIcon pipeUpGraphicTemp;
     private ImageIcon pipeDownGraphicTemp;
 
+    // private String[] messages = {"Ale zapierdala", "Squeeze through.."};
+
     protected boolean stop = false;
     private boolean isPressedUp = false;
     private boolean isPressedDown = false;
@@ -57,6 +60,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     final int WIDTH = 600, HEIGHT = 800;
     public int step = 0;
     public int starty = 0;
+    public boolean moveBanner = false;
 
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
@@ -70,6 +74,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         ground = new Rectangle(0, 700, WIDTH, 100);
         grass = new Rectangle(0, 700, WIDTH, 20);
         bird = new Rectangle(-30, 350, 30, 30);
+        banner = new Rectangle(-100, 100, 150, 60);
 
         frame.add(display);
         frame.addKeyListener(this);
@@ -92,10 +97,8 @@ public class FlappyBird implements ActionListener, KeyListener {
             pipeDownGraphicTemp = new ImageIcon("src" + File.separator + "flapper" + File.separator + "resources" + File.separator + "pipe_down.png");
 
         try {
-            //create the font to use. Specify the size!
-            customFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/flapper/resources/arcade_font.ttf")).deriveFont(40f);
+            customFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/flapper/resources/arcade_font.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            //register the font
             ge.registerFont(customFont);
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,6 +156,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         score = 0;
         birdSpeed = 7;
         step = 0;
+        moveBanner = false;
         
 
         // reset position of sprites
@@ -161,13 +165,14 @@ public class FlappyBird implements ActionListener, KeyListener {
         pipeUp.x = 265;
         pipeUp.y = -560;
         bird.y = 350;
+        banner.x = -550;
 
         // start the game loop again
         timer.start();
         jump();
     }
 
-    public int birdSpeed = 5;
+    public int birdSpeed;
 
     public void birdMove() {
         Random rand = new Random();
@@ -178,7 +183,6 @@ public class FlappyBird implements ActionListener, KeyListener {
         if (rand.nextInt(12) == 1) {
             if (! (bird.x > 250 && bird.x < 350)) {
                 step = 0;
-
                 jump();
             }
         }
@@ -191,6 +195,13 @@ public class FlappyBird implements ActionListener, KeyListener {
         if (step >= 1) {
             jump();
         }
+        if(moveBanner && banner.x < 900){
+            banner.x += 15;
+        }
+        if(banner.x >= 700){
+            moveBanner = false;
+            banner.x = -550;
+        }
         // move bird to the right with increaseing speed
         bird.x += birdSpeed;
 
@@ -202,9 +213,10 @@ public class FlappyBird implements ActionListener, KeyListener {
         // reset the bird after going out of field
         if (bird.x >= WIDTH) {
             bird.x = -30;
-            bird.y = rand.nextInt(200, 500);
+            bird.y = rand.nextInt(220, 480);
             step = 0;
             score += 1;
+            
             increaseDifficulty();
 
             jump();
@@ -224,10 +236,15 @@ public class FlappyBird implements ActionListener, KeyListener {
         if (score % 5 == 0 && (score % 2 != 0 | score > 50)) {
             birdSpeed += 2;
             System.out.println("popierdalacz 3000");
+            moveBanner = true;
+
+            
         } else if (score % 10 == 0 && score < 51) {
             pipeDown.y -= 20;
             pipeUp.y += 20;
             System.out.println("sie popiesci to sie zmiesci");
+            moveBanner = true;
+
         }
     }
 
@@ -235,19 +252,19 @@ public class FlappyBird implements ActionListener, KeyListener {
          
 
         g.drawImage(backgroundGraphic, 0, 0, null);
-
-        // g.setColor(new Color(103, 212, 77, 255));
-        // g.fillRect(pipeDown.x, pipeDown.y, pipeDown.width, pipeDown.height);
-        // g.fillRect(pipeUp.x, pipeUp.y, pipeUp.width, pipeUp.height);
         g.drawImage(pipeUpGraphic, pipeUp.x, pipeUp.y, null);
+
+        g.setFont(customFont.deriveFont(20f));
         g.drawImage(pipeDownGraphic, pipeDown.x, pipeDown.y, null);
+
+        g.drawString("getting harder...", banner.x, banner.y);
 
         g.drawImage(groundGraphic, 0, HEIGHT - groundGraphic.getHeight(null), null);
 
         // TODO: ten pierdolony font dodac
         g.setColor(Color.black);
         // g.setFont(new Font("Comic Sans MS", 1, 60));
-        g.setFont(customFont);
+        g.setFont(customFont.deriveFont(40f));
         // g.setFont(scoreFont);
         g.drawString(score + "", 15, 60);
 
