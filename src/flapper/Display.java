@@ -1,7 +1,6 @@
 package flapper;
 
 import java.awt.Graphics;
-
 import javax.swing.JPanel;
 
 public class Display extends JPanel {
@@ -12,6 +11,4 @@ public class Display extends JPanel {
         super.paintComponent(g);
         FlappyBird.flappyBird.repaint(g);
     }
-
-    
 }
