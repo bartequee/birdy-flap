@@ -206,6 +206,8 @@ public class FlappyBird implements ActionListener, KeyListener {
             bird.y = 350;
             step = 0;
             score += 1;
+            increaseDifficulty();
+
             jump();
         }
 
