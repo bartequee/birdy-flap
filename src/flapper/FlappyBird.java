@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.RenderingHints.Key;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -154,7 +155,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         isPressedUp = false;
         stop = false;
         score = 0;
-        birdSpeed = 5;
+        birdSpeed = 7;
         step = 0;
 
         // reset position of sprites
@@ -166,6 +167,7 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         // start the game loop again
         timer.start();
+        jump();
     }
 
     public int birdSpeed = 5;
@@ -176,7 +178,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         // ~ once in 10 ticks jump. as the jump has to be as smooth
         // as possible, it is split and its progress is monitored
         // using the <step> flag. each jump starts from step=0
-        if (rand.nextInt(10) == 1) {
+        if (rand.nextInt(12) == 1) {
             if (! (bird.x > 250 && bird.x < 350)) {
                 step = 0;
 
@@ -203,7 +205,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         // reset the bird after going out of field
         if (bird.x >= WIDTH) {
             bird.x = -30;
-            bird.y = 350;
+            bird.y = rand.nextInt(200, 500);
             step = 0;
             score += 1;
             increaseDifficulty();
@@ -279,10 +281,10 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
+        if ((e.getKeyCode() == KeyEvent.VK_UP) || (e.getKeyCode() == KeyEvent.VK_W)) {
             isPressedUp = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+        if ((e.getKeyCode() == KeyEvent.VK_DOWN) || (e.getKeyCode() == KeyEvent.VK_S)) {
             isPressedDown = true;
         }
     }
@@ -293,10 +295,12 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
+
+        if ((e.getKeyCode() == KeyEvent.VK_UP) || (e.getKeyCode() == KeyEvent.VK_W)) {
             isPressedUp = false;
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+
+        if ((e.getKeyCode() == KeyEvent.VK_DOWN) || (e.getKeyCode() == KeyEvent.VK_S)){
             isPressedDown = false;
         }
     }
