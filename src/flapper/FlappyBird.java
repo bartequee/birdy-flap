@@ -35,7 +35,7 @@ public class FlappyBird implements ActionListener, KeyListener {
     private int score;
     private int birdSpeed;
     private Font arcadeFont;
-    private int starty;
+    private boolean scoreAdded;
 
     //graphics
     private Image backgroundGraphic;
@@ -50,9 +50,11 @@ public class FlappyBird implements ActionListener, KeyListener {
     private boolean isPressedDown;
     private int step;
     private boolean moveBanner;
+    private int starty;
 
     // constants
-    final int WIDTH = 600, HEIGHT = 800;
+    final int WIDTH = 600;
+    final int HEIGHT = 800;
 
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
@@ -81,25 +83,25 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     private void loadGraphics() {
         // this way we don't have to specify the separate paths for windows and macs
-        ImageIcon groundGraphicTemp = new ImageIcon(
+        groundGraphic = new ImageIcon(
                 "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "ground.png");
-        ImageIcon backgroundGraphicTemp = new ImageIcon(
+                + "resources" + File.separator + "ground.png").getImage();
+        backgroundGraphic = new ImageIcon(
                 "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "background.png");
-        ImageIcon birdGraphicTemp = new ImageIcon(
+                + "resources" + File.separator + "background.png").getImage();
+        birdGraphic = new ImageIcon(
                 "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "bird.png");
-        ImageIcon pipeUpGraphicTemp = new ImageIcon(
+                + "resources" + File.separator + "bird.png").getImage();
+        pipeUpGraphic = new ImageIcon(
                 "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "pipe_up.png");
-        ImageIcon pipeDownGraphicTemp = new ImageIcon(
+                + "resources" + File.separator + "pipe_up.png").getImage();
+        pipeDownGraphic = new ImageIcon(
                 "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "pipe_down.png");
+                + "resources" + File.separator + "pipe_down.png").getImage();
         try {
             arcadeFont = Font.createFont(Font.TRUETYPE_FONT, 
-                new File("src" + File.separator + "flapper" + 
-                    File.separator + "resources" + File.separator + "arcade_font.ttf"));
+                new File("src" + File.separator + "flapper" 
+                    + File.separator + "resources" + File.separator + "arcade_font.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(arcadeFont);
         } catch (IOException e) {
@@ -107,11 +109,6 @@ public class FlappyBird implements ActionListener, KeyListener {
         } catch (FontFormatException e) {
             e.printStackTrace();
         }
-        backgroundGraphic = backgroundGraphicTemp.getImage();
-        groundGraphic = groundGraphicTemp.getImage();
-        birdGraphic = birdGraphicTemp.getImage();
-        pipeUpGraphic = pipeUpGraphicTemp.getImage();
-        pipeDownGraphic = pipeDownGraphicTemp.getImage();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -157,14 +154,13 @@ public class FlappyBird implements ActionListener, KeyListener {
         birdSpeed = 5;
         step = 0;
         moveBanner = false;
+        scoreAdded = false;
 
         // reset position of sprites
-        pipeDown.x = 265;
         pipeDown.y = 500;
-        pipeUp.x = 265;
         pipeUp.y = -560;
         bird.y = 350;
-        banner.x = -550;
+        banner.x = -105;
 
         // start the game loop again
         timer.start();
@@ -184,7 +180,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         // using the <step> flag. each jump starts from step=0
         Random rand = new Random();
         if (rand.nextInt(12) == 1) {
-            if (!(bird.x > 235 && bird.x < 350)) {
+            if (!(bird.x > 215 && bird.x < 310)) {
                 step = 0;
                 jump();
             }
@@ -201,17 +197,21 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
         if (banner.x >= 700) {
             moveBanner = false;
-            banner.x = -550;
+            banner.x = -105;
         }
         if (bird.y >= HEIGHT - 100) {
             jump();
+        }
+        if (bird.x > pipeUp.x+pipeUp.width && !scoreAdded){
+            score += 1;
+            scoreAdded = true;
+            increaseDifficulty();
         }
         if (bird.x >= WIDTH) {
             bird.x = -30;
             bird.y = rand.nextInt(220, 480);
             step = 0;
-            score += 1;
-            increaseDifficulty();
+            scoreAdded = false;
             jump();
         }
     }
@@ -246,10 +246,10 @@ public class FlappyBird implements ActionListener, KeyListener {
 
         g.setColor(Color.black);
         g.setFont(arcadeFont.deriveFont(20f));
-        g.drawString("getting harder!", banner.x, banner.y);
+        g.drawString("lvl up!", banner.x, banner.y);
 
         g.setFont(arcadeFont.deriveFont(40f));
-        g.drawString(score + "", 15, 60);
+        g.drawString("PTS  " + score, 15, 50);
 
         birdMove();
     }
