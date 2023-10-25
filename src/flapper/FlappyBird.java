@@ -35,7 +35,8 @@ public class FlappyBird implements ActionListener, KeyListener {
     private int score;
     private int birdSpeed;
     private Font arcadeFont;
-    private boolean scoreAdded;
+    private int step;       
+    private int starty;
 
     //graphics
     private Image backgroundGraphic;
@@ -48,9 +49,8 @@ public class FlappyBird implements ActionListener, KeyListener {
     private boolean stop;
     private boolean isPressedUp;
     private boolean isPressedDown;
-    private int step;
     private boolean moveBanner;
-    private int starty;
+    private boolean scoreAdded;
 
     // constants
     final int WIDTH = 600;
