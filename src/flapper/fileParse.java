@@ -8,9 +8,15 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+/**
+ * Class responsible for parsing the file containing the high scores.
+ */
 public class fileParse {
     private Dictionary<String, Integer> dictionary;
 
+    /**
+     * Constructor for FileParse.
+     */
     public fileParse() {
         try {
             dictionary = redFile();
@@ -19,39 +25,47 @@ public class fileParse {
         }
     }
 
-    public void add(String name, int score){
+    /**
+     * Adds a new score to the file.
+     * 
+     * @param name  name of the player
+     * @param score of the player
+     */
+
+    public void add(String name, int score) {
 
         Enumeration<String> keys = dictionary.keys();
-        int scores[] = new int[10];
+        int[] scores = new int[10];
         int n = 0;
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             scores[n] = dictionary.get(key);
-            n++;}
+            n++;
+        }
         // print scores
-        for(int i = 0; i < 10; i+=1){
+        for (int i = 0; i < 10; i += 1) {
             System.out.println(scores[i]);
         }
 
-        int smallest = 200;
-        for(int i = 0; i < 10; i+=1){
-            if(scores[i] < smallest){
+        int smallest = 100;
+        for (int i = 0; i < 10; i += 1) {
+            if (scores[i] < smallest) {
                 smallest = scores[i];
             }
         }
 
-        if(score <= smallest){
+        if (score <= smallest) {
             return;
         }
         keys = dictionary.keys();
         String smallestKey = "";
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
-            if(dictionary.get(key) == smallest){
+            if (dictionary.get(key) == smallest) {
                 smallestKey = key;
             }
         }
-        
+
         if (dictionary.get(name) == null) {
             dictionary.remove(smallestKey);
         }
@@ -63,24 +77,28 @@ public class fileParse {
         return dictionary;
     }
 
-    private Dictionary<String,Integer> redFile() throws IOException{
-        Dictionary<String, Integer> dict= new Hashtable<>();
-       
+    private Dictionary<String, Integer> redFile() throws IOException {
+        Dictionary<String, Integer> dict = new Hashtable<>();
+
         BufferedReader bf = new BufferedReader(
-            new FileReader("src/flapper/resources/score.txt"));
-       
+                new FileReader("src/flapper/resources/score.txt"));
+
         String line = bf.readLine();
-       
-        for (int i = 0; i < 10; i+=1) {
+
+        for (int i = 0; i < 10; i += 1) {
             dict.put(line, Integer.parseInt(bf.readLine()));
             line = bf.readLine();
         }
-    
+
         bf.close();
         return dict;
     }
 
-    public void write(){
+    /**
+     * Writes the dictionary to the file.
+     */
+
+    public void write() {
         try {
             writeToFile(dictionary);
         } catch (IOException e) {
@@ -98,5 +116,5 @@ public class fileParse {
             myWriter.write(dict.get(key) + "\n");
         }
         myWriter.close();
-    }    
+    }
 }

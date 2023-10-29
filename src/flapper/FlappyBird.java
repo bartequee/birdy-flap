@@ -39,7 +39,7 @@ import javax.swing.plaf.ColorUIResource;
 public class FlappyBird implements ActionListener, KeyListener {
     // variables
     protected static FlappyBird flappyBird;
-    private FileParse parser;
+    private fileParse parser;
     private Display display;
     private Dimension dim;
     private Timer timer;
@@ -81,7 +81,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         this.timer = new Timer(20, this);
         this.display = new Display();
         this.dim = Toolkit.getDefaultToolkit().getScreenSize();
-        parser = new FileParse();
+        parser = new fileParse();
 
         this.pipeDown = new Rectangle(265, 500, 90, HEIGHT);
         this.pipeUp = new Rectangle(265, -560, 90, HEIGHT);
@@ -240,7 +240,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         banner.x = -105;
 
         // start the game loop again
-        parser = new FileParse();
+        parser = new fileParse();
         timer.start();
         jump();
     }
