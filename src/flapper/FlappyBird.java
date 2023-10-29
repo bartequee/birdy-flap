@@ -322,7 +322,6 @@ public class FlappyBird implements ActionListener, KeyListener {
             birdMove();
         }
 
-        birdMove();
     }
 
     private void up() {
