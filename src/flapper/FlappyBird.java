@@ -32,10 +32,14 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
 
+/**
+ * Main class of the game.
+ */
+
 public class FlappyBird implements ActionListener, KeyListener {
     // variables
     protected static FlappyBird flappyBird;
-    private fileParse parser;
+    private FileParse parser;
     private Display display;
     private Dimension dim;
     private Timer timer;
@@ -68,13 +72,16 @@ public class FlappyBird implements ActionListener, KeyListener {
     private final int WIDTH = 600;
     private final int HEIGHT = 800;
 
+    /**
+     * Constructor of the game.
+     */
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
         loadGraphics();
         this.timer = new Timer(20, this);
         this.display = new Display();
         this.dim = Toolkit.getDefaultToolkit().getScreenSize();
-        parser = new fileParse();
+        parser = new FileParse();
 
         this.pipeDown = new Rectangle(265, 500, 90, HEIGHT);
         this.pipeUp = new Rectangle(265, -560, 90, HEIGHT);
@@ -82,6 +89,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         this.banner = new Rectangle(-100, 100, 150, 60);
 
         frame.add(display);
+        frame.setIconImage(birdGraphic);
         frame.addKeyListener(this);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2,
@@ -129,6 +137,9 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
     }
 
+    /**
+     * Method responsible for the game loop.
+     */
     public void actionPerformed(ActionEvent e) {
         if (!stop) {
             display.repaint();
@@ -160,8 +171,9 @@ public class FlappyBird implements ActionListener, KeyListener {
         panel.setBackground(new Color(76, 154, 215));
 
         JLabel label = new JLabel(String.format(
-                "<html><center><h1><b>%2d</b></h1>Input your name<br>to save your score!</center></html>",
-                score));
+            "<html><center><h1><b>%2d</b></h1>"
+                + "Input your name<br>to save your score!</center></html>",
+            score));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFont(arcadeFont.deriveFont(14f));
         panel.add(label);
@@ -228,7 +240,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         banner.x = -105;
 
         // start the game loop again
-        parser = new fileParse();
+        parser = new FileParse();
         timer.start();
         jump();
     }
@@ -301,6 +313,9 @@ public class FlappyBird implements ActionListener, KeyListener {
         }
     }
 
+    /**
+     * Drawing the textures of the game and main graphics.
+     */
     protected void repaint(Graphics g) {
         g.drawImage(backgroundGraphic, 0, 0, null);
         g.drawImage(pipeUpGraphic, pipeUp.x, pipeUp.y, null);
@@ -326,21 +341,19 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     }
 
-    private void leaderboard(Graphics graphics) {
-        Dictionary a = parser.getDict();
-        Enumeration<String> keys = a.keys();
-        // print out the values 
+    private void leaderboard(Graphics graphics) {        
         graphics.setFont(arcadeFont.deriveFont(20f));
         graphics.drawString("Leaderboard", 200, 450);
-        graphics.setFont(arcadeFont.deriveFont(15f));
-        int y = 520;
-        // Enumeration<String> keys = .keys();
-        // print the leaderboard
+        graphics.setFont(arcadeFont.deriveFont(18f));
+
+        Dictionary<String, Integer> a = parser.getDict();
         Enumeration<String> key = a.keys();
+        
+        int y = 520;
         for (int i = 0; i < 5; i += 1) {
             String keyy = key.nextElement();
             graphics.drawString(String.format("%2d. %s %2d", i + 1,
-                    keyy, a.get(keyy)), 90, y);
+                    keyy, a.get(keyy)), 60, y);
             y += 20;
         }
         y = 520;
@@ -351,7 +364,6 @@ public class FlappyBird implements ActionListener, KeyListener {
                     keyy, a.get(keyy)), 400, y);
             y += 20;
         }
-
     }
 
     private void up() {
