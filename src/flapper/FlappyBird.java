@@ -16,15 +16,25 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import java.awt.Insets;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.ColorUIResource;
 
 public class FlappyBird implements ActionListener, KeyListener {
-    //variable
+    // variables
     protected static FlappyBird flappyBird;
+    private fileParse parser;
     private Display display;
     private Dimension dim;
     private Timer timer;
@@ -35,10 +45,10 @@ public class FlappyBird implements ActionListener, KeyListener {
     private int score;
     private int birdSpeed;
     private Font arcadeFont;
-    private int step;       
+    private int step;
     private int starty;
 
-    //graphics
+    // graphics
     private Image backgroundGraphic;
     private Image groundGraphic;
     private Image birdGraphic;
@@ -51,10 +61,11 @@ public class FlappyBird implements ActionListener, KeyListener {
     private boolean isPressedDown;
     private boolean moveBanner;
     private boolean scoreAdded;
+    private boolean inMenu = true;
 
     // constants
-    final int WIDTH = 600;
-    final int HEIGHT = 800;
+    private final int WIDTH = 600;
+    private final int HEIGHT = 800;
 
     public FlappyBird() {
         JFrame frame = new JFrame("Flap you");
@@ -62,6 +73,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         this.timer = new Timer(20, this);
         this.display = new Display();
         this.dim = Toolkit.getDefaultToolkit().getScreenSize();
+        parser = new fileParse();
 
         this.pipeDown = new Rectangle(265, 500, 90, HEIGHT);
         this.pipeUp = new Rectangle(265, -560, 90, HEIGHT);
@@ -72,7 +84,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         frame.addKeyListener(this);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2,
-             dim.height / 2 - frame.getSize().height / 2);
+                dim.height / 2 - frame.getSize().height / 2);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);
@@ -84,24 +96,29 @@ public class FlappyBird implements ActionListener, KeyListener {
     private void loadGraphics() {
         // this way we don't have to specify the separate paths for windows and macs
         groundGraphic = new ImageIcon(
-                "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "ground.png").getImage();
+                "src" + File.separator + "flapper" + File.separator
+                        + "resources" + File.separator + "ground.png")
+                .getImage();
         backgroundGraphic = new ImageIcon(
-                "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "background.png").getImage();
+                "src" + File.separator + "flapper" + File.separator
+                        + "resources" + File.separator + "background.png")
+                .getImage();
         birdGraphic = new ImageIcon(
-                "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "bird.png").getImage();
+                "src" + File.separator + "flapper" + File.separator
+                        + "resources" + File.separator + "bird.png")
+                .getImage();
         pipeUpGraphic = new ImageIcon(
-                "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "pipe_up.png").getImage();
+                "src" + File.separator + "flapper" + File.separator
+                        + "resources" + File.separator + "pipe_up.png")
+                .getImage();
         pipeDownGraphic = new ImageIcon(
-                "src" + File.separator + "flapper" + File.separator 
-                + "resources" + File.separator + "pipe_down.png").getImage();
+                "src" + File.separator + "flapper" + File.separator
+                        + "resources" + File.separator + "pipe_down.png")
+                .getImage();
         try {
-            arcadeFont = Font.createFont(Font.TRUETYPE_FONT, 
-                new File("src" + File.separator + "flapper" 
-                    + File.separator + "resources" + File.separator + "arcade_font.ttf"));
+            arcadeFont = Font.createFont(Font.TRUETYPE_FONT,
+                    new File("src" + File.separator + "flapper"
+                            + File.separator + "resources" + File.separator + "arcade_font.ttf"));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(arcadeFont);
         } catch (IOException e) {
@@ -121,6 +138,10 @@ public class FlappyBird implements ActionListener, KeyListener {
             if (isPressedUp) {
                 up();
             }
+            if ((isPressedDown || isPressedUp) && inMenu) {
+                inMenu = false;
+            }
+
         } else {
             stopper();
         }
@@ -130,9 +151,51 @@ public class FlappyBird implements ActionListener, KeyListener {
         stop = true;
         timer.stop();
         bird.x = -30;
+
+        JPanel panel = new JPanel();
+        panel.setSize(new Dimension(300, 70));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(new EmptyBorder(new Insets(20, 20, 20, 20)));
+        panel.setBackground(new Color(76, 154, 215));
+
+        JLabel label = new JLabel(String.format(
+                "<html><center><h1><b>%2d</b></h1>Input your name<br>to save your score!</center></html>",
+                score));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setFont(arcadeFont.deriveFont(14f));
+        panel.add(label);
+
+        JTextField nameField = new JTextField();
+        nameField.setColumns(5);
+        nameField.setFont(arcadeFont.deriveFont(14f));
+        panel.add(nameField);
+
+        Object[] options = { "Save", "Discard" };
+        UIManager.put("OptionPane.minimumSize", new Dimension(300, 70));
+        UIManager.put("OptionPane.background", new ColorUIResource(76, 154, 215));
+        UIManager.put("Panel.background", new ColorUIResource(76, 154, 199));
+
+        int choiceSave = JOptionPane.showOptionDialog(null, panel, "Save high score!",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+                options, options[1]);
+        // 1 is discard, 0 is save
+        switch (choiceSave) {
+            case 1:
+                break;
+            case 0:
+                parser.add(nameField.getText(), score);
+                parser.write();
+                break;
+            default:
+                break;
+        }
+
+        UIManager.put("OptionPane.minimumSize", new Dimension(10, 10));
+
         int choice = JOptionPane.showConfirmDialog(null,
-             String.format("Score:%2d \nDo you want to play again?", score),
-                "Game Over", JOptionPane.YES_NO_OPTION);
+                String.format("Score:%2d \nDo you want to play again?", score),
+                "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.CANCEL_OPTION,
+                new ImageIcon("src/flapper/resources/bird.png"));
         switch (choice) {
             case JOptionPane.YES_OPTION:
                 restart();
@@ -149,6 +212,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         // Reset the game variables
         isPressedDown = false;
         isPressedUp = false;
+        inMenu = true;
         stop = false;
         score = 0;
         birdSpeed = 5;
@@ -163,6 +227,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         banner.x = -105;
 
         // start the game loop again
+        parser = new fileParse();
         timer.start();
         jump();
     }
@@ -192,22 +257,20 @@ public class FlappyBird implements ActionListener, KeyListener {
         if (step >= 1) {
             jump();
         }
-        if (moveBanner && banner.x < 900) {
+        if (moveBanner && banner.x <= 600) {
             banner.x += 10;
-        }
-        if (banner.x >= 700) {
+        } else if (banner.x > 600) {
             moveBanner = false;
             banner.x = -105;
         }
         if (bird.y >= HEIGHT - 100) {
             jump();
         }
-        if (bird.x > pipeUp.x+pipeUp.width && !scoreAdded){
+        if (bird.x > pipeUp.x + pipeUp.width && !scoreAdded) {
             score += 1;
             scoreAdded = true;
             increaseDifficulty();
-        }
-        if (bird.x >= WIDTH) {
+        } else if (bird.x >= WIDTH) {
             bird.x = -30;
             bird.y = rand.nextInt(220, 480);
             step = 0;
@@ -244,12 +307,20 @@ public class FlappyBird implements ActionListener, KeyListener {
         g.drawImage(groundGraphic, 0, HEIGHT - groundGraphic.getHeight(null), null);
         g.drawImage(birdGraphic, bird.x, bird.y, null);
 
-        g.setColor(Color.black);
-        g.setFont(arcadeFont.deriveFont(20f));
-        g.drawString("lvl up!", banner.x, banner.y);
+        if (inMenu) {
+            g.setFont(arcadeFont.deriveFont(60f));
+            g.drawString("Birdy     Flap", 36, 120);
+            g.setFont(arcadeFont.deriveFont(20f));
+            g.drawString("Press up or down to start", 110, 320);
+            g.drawString("W-S   Up-Down   K-J", 185, 380);
+        } else {
+            g.setFont(arcadeFont.deriveFont(20f));
+            g.drawString("lvl up!", banner.x, banner.y);
+            g.setFont(arcadeFont.deriveFont(40f));
+            g.drawString("PTS  " + score, 15, 50);
 
-        g.setFont(arcadeFont.deriveFont(40f));
-        g.drawString("PTS  " + score, 15, 50);
+            birdMove();
+        }
 
         birdMove();
     }
@@ -272,11 +343,13 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if ((e.getKeyCode() == KeyEvent.VK_UP) || (e.getKeyCode() == KeyEvent.VK_W)
+        if ((e.getKeyCode() == KeyEvent.VK_UP)
+                || (e.getKeyCode() == KeyEvent.VK_W)
                 || (e.getKeyCode() == KeyEvent.VK_K)) {
             isPressedUp = true;
         }
-        if ((e.getKeyCode() == KeyEvent.VK_DOWN) || (e.getKeyCode() == KeyEvent.VK_S)
+        if ((e.getKeyCode() == KeyEvent.VK_DOWN)
+                || (e.getKeyCode() == KeyEvent.VK_S)
                 || (e.getKeyCode() == KeyEvent.VK_J)) {
 
             isPressedDown = true;
@@ -290,12 +363,14 @@ public class FlappyBird implements ActionListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
-        if ((e.getKeyCode() == KeyEvent.VK_UP) || (e.getKeyCode() == KeyEvent.VK_W)
+        if ((e.getKeyCode() == KeyEvent.VK_UP)
+                || (e.getKeyCode() == KeyEvent.VK_W)
                 || (e.getKeyCode() == KeyEvent.VK_K)) {
             isPressedUp = false;
         }
 
-        if ((e.getKeyCode() == KeyEvent.VK_DOWN) || (e.getKeyCode() == KeyEvent.VK_S)
+        if ((e.getKeyCode() == KeyEvent.VK_DOWN)
+                || (e.getKeyCode() == KeyEvent.VK_S)
                 || (e.getKeyCode() == KeyEvent.VK_J)) {
             isPressedDown = false;
         }

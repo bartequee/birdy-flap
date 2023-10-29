@@ -1,0 +1,92 @@
+package flapper;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+public class fileParse {
+	private Dictionary<String, Integer> dictionary;
+
+	public fileParse(){
+		try {
+			dictionary = redFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void add(String name, int score){
+
+		Enumeration<String> keys = dictionary.keys();
+		int scores[] = new int[10];
+		int n = 0;
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+			scores[n] = dictionary.get(key);
+			n++;
+        }
+
+		int smallest = 0;
+		for(int i = 0; i < 10; i+=1){
+			if(scores[i] < scores[smallest]){
+				smallest = i;
+			}
+		}
+
+		if(score <= scores[smallest]){
+			return;
+		}
+
+		keys = dictionary.keys();
+		String smallestKey = "";
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			if(dictionary.get(key) == smallest){
+				smallestKey = key;
+			}
+		}
+		dictionary.remove(smallestKey);
+		dictionary.put(name, score);
+	}
+
+	private Dictionary<String,Integer> redFile() throws IOException{
+		Dictionary<String, Integer> dict= new Hashtable<>();
+       
+        BufferedReader bf = new BufferedReader(
+            new FileReader("src/flapper/resources/score.txt"));
+       
+        String line = bf.readLine();
+       
+        for (int i = 0; i < 10; i+=1) {
+            dict.put(line, Integer.parseInt(bf.readLine()));
+            line = bf.readLine();
+        }
+	
+        bf.close();
+		return dict;
+	}
+
+	public void write(){
+		try {
+			writeToFile(dictionary);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void writeToFile(Dictionary<String, Integer> dict) throws IOException {
+		FileWriter myWriter = new FileWriter("src/flapper/resources/score.txt");
+		Enumeration<String> keys = dict.keys();
+
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+			myWriter.write(key + "\n");
+			myWriter.write(dict.get(key) + "\n");
+        }
+		myWriter.close();
+	}	
+}
