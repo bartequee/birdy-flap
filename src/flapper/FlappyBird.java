@@ -171,9 +171,9 @@ public class FlappyBird implements ActionListener, KeyListener {
         panel.setBackground(new Color(76, 154, 215));
 
         JLabel label = new JLabel(String.format(
-            "<html><center><h1><b>%2d</b></h1>"
-                + "Input your name<br>to save your score!</center></html>",
-            score));
+                "<html><center><h1><b>%2d</b></h1>"
+                        + "Input your name<br>to save your score!</center></html>",
+                score));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFont(arcadeFont.deriveFont(14f));
         panel.add(label);
@@ -322,7 +322,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         g.drawImage(pipeDownGraphic, pipeDown.x, pipeDown.y, null);
         g.drawImage(groundGraphic, 0, HEIGHT - groundGraphic.getHeight(null), null);
         g.drawImage(birdGraphic, bird.x, bird.y, null);
-
+        g.setColor(new Color(0, 0, 0));
         if (inMenu) {
             g.setFont(arcadeFont.deriveFont(60f));
             g.drawString("Birdy     Flap", 36, 120);
@@ -341,14 +341,14 @@ public class FlappyBird implements ActionListener, KeyListener {
 
     }
 
-    private void leaderboard(Graphics graphics) {        
+    private void leaderboard(Graphics graphics) {
         graphics.setFont(arcadeFont.deriveFont(20f));
         graphics.drawString("Leaderboard", 200, 450);
         graphics.setFont(arcadeFont.deriveFont(18f));
 
         Dictionary<String, Integer> a = parser.getDict();
         Enumeration<String> key = a.keys();
-        
+
         int y = 520;
         for (int i = 0; i < 5; i += 1) {
             String keyy = key.nextElement();
@@ -361,7 +361,7 @@ public class FlappyBird implements ActionListener, KeyListener {
         for (int i = 5; i < 10; i += 1) {
             String keyy = key.nextElement();
             graphics.drawString(String.format("%2d. %s %2d", i + 1,
-                    keyy, a.get(keyy)), 400, y);
+                    keyy, a.get(keyy)), 370, y);
             y += 20;
         }
     }
