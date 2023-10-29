@@ -7,6 +7,7 @@ import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,9 +16,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Random;
-import java.awt.Insets;
-
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -183,7 +184,7 @@ public class FlappyBird implements ActionListener, KeyListener {
             case 1:
                 break;
             case 0:
-                parser.add(nameField.getText(), score);
+                parser.add(nameField.getText().toUpperCase(), score);
                 parser.write();
                 break;
             default:
@@ -313,6 +314,7 @@ public class FlappyBird implements ActionListener, KeyListener {
             g.setFont(arcadeFont.deriveFont(20f));
             g.drawString("Press up or down to start", 110, 320);
             g.drawString("W-S   Up-Down   K-J", 185, 380);
+            leaderboard(g);
         } else {
             g.setFont(arcadeFont.deriveFont(20f));
             g.drawString("lvl up!", banner.x, banner.y);
@@ -320,6 +322,34 @@ public class FlappyBird implements ActionListener, KeyListener {
             g.drawString("PTS  " + score, 15, 50);
 
             birdMove();
+        }
+
+    }
+
+    private void leaderboard(Graphics graphics) {
+        Dictionary a = parser.getDict();
+        Enumeration<String> keys = a.keys();
+        // print out the values 
+        graphics.setFont(arcadeFont.deriveFont(20f));
+        graphics.drawString("Leaderboard", 200, 450);
+        graphics.setFont(arcadeFont.deriveFont(15f));
+        int y = 520;
+        // Enumeration<String> keys = .keys();
+        // print the leaderboard
+        Enumeration<String> key = a.keys();
+        for (int i = 0; i < 5; i += 1) {
+            String keyy = key.nextElement();
+            graphics.drawString(String.format("%2d. %s %2d", i + 1,
+                    keyy, a.get(keyy)), 90, y);
+            y += 20;
+        }
+        y = 520;
+
+        for (int i = 5; i < 10; i += 1) {
+            String keyy = key.nextElement();
+            graphics.drawString(String.format("%2d. %s %2d", i + 1,
+                    keyy, a.get(keyy)), 400, y);
+            y += 20;
         }
 
     }
